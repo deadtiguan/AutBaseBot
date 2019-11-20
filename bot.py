@@ -1,10 +1,12 @@
 from variables import *
 import telebot
 import time
+from telebot import types
 from telebot import apihelper
+import os
 
 bot = telebot.TeleBot(TOKEN)
-apihelper.proxy = {'https': 'https://31.186.102.164:3128'}
+#apihelper.proxy = {'http': 'http://46.235.53.26:3128'}
 
 
 def access_handler(message):
@@ -24,7 +26,7 @@ def access_member(message):
             return True
 
 
-@bot.message_handler(commands=['start','help'])
+@bot.message_handler(commands=['start', 'help'])
 def start_mes(message):
     if message.chat.type == "private":
         bot.send_message(message.chat.id, "Да, привет")
@@ -42,9 +44,13 @@ def ping_handler(message):
     bot.reply_to(message, message.chat.id)
 
 
-@bot.message_handler(commands=['sayty'])
-def seyty_handler(message):
-    bot.reply_to(message, "Задонать , сука.")
+@bot.inline_handler(lambda query: query.query == '')
+def query_text(inline_query):
+    try:
+        shrug = types.InlineQueryResultArticle('3', 'Shrug', types.InputTextMessageContent('¯\_(ツ)_/¯'))
+        bot.answer_inline_query(inline_query.id, [shrug])
+    except Exception as e:
+        print(e)
 
 
 @bot.message_handler(commands=['kick'], func=access_member)
@@ -97,13 +103,11 @@ def mute_handler(message):
                         time_mute = int(time_mute) * 60 * 24
                 else:
                     unit = time_mute + " секунд"
-
             except:
                 time_mute = '300'
             bot.restrict_chat_member(message.chat.id, message.reply_to_message.from_user.id,
                                  until_date=time.time() + int(time_mute),
                                  can_send_messages=False)
-            comment = "*Причина не указана!*"
             if len(message.text.split()) > 2:
                 comment = "\nПричина:\n "+message.text.split(maxsplit=2)[2]
             else:
@@ -115,7 +119,10 @@ def mute_handler(message):
 
 @bot.message_handler(commands=['um', 'un', 'unmute', 'unban'], func=access_member)
 def unmute_handler(message):
-    if message.reply_to_message:
+    if bot.get_chat_member(message.chat.id, message.reply_to_message.from_user.id).status \
+            in ['creator', 'administrator']:
+        bot.reply_to(message, "Это админ!")
+    elif message.reply_to_message:
         bot.promote_chat_member(message.chat.id, message.reply_to_message.from_user.id)
         bot.reply_to(message, "Выполнено! Снял ограничения.")
     else:
@@ -144,6 +151,11 @@ def newwelcome(message, id_from_who, x):
 
     else:
         bot.register_next_step_handler(message, newwelcome, id_from_who)
+
+
+@bot.message_handler(func=lambda m: str(m.text).lower().startswith("#help") or str(m.text).lower().startswith("#start"))
+def start_mes_alt(message):
+    start_mes(message)
 
 
 @bot.message_handler(func=access_handler, content_types=['new_chat_members'])
