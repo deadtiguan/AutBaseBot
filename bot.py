@@ -1,10 +1,14 @@
-from variables import *
+#from variables import *
 import telebot
 import time
 from telebot import types
 from telebot import apihelper
 import os
 
+
+Access_chat = [-1001303494318, -281779600]
+
+TOKEN = os.environ['token']
 bot = telebot.TeleBot(TOKEN)
 #apihelper.proxy = {'http': 'http://46.235.53.26:3128'}
 
