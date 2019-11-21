@@ -32,9 +32,11 @@ bot = telebot.TeleBot(TOKEN)
 def access_handler(message):
     if message.chat.id in Access_chat:
         return True
-    else:
+    elif message.chat.type in ["group", "supergroup"]:
         bot.send_message(message.chat.id, "Чат не подтвержден. Ливаю..")
         bot.leave_chat(message.chat.id)
+        return False
+    else:
         return False
 
 
