@@ -49,10 +49,10 @@ def access_member(message):
 
 
 
-@bot.message_handler(func=lambda m: m.text and m.text.startswith('/') and '@'
-                                    in m.text and bot.get_me().username.lower())
-def check_cmd_for_bot(m):
-     pass
+#@bot.message_handler(func=lambda m: m.text and m.text.startswith('/') and '@'
+ #                                   in m.text and bot.get_me().username.lower())
+#def check_cmd_for_bot(m):
+ #    pass
 
 
 @bot.message_handler(commands=['start', 'help'])
