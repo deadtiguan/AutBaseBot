@@ -12,11 +12,11 @@ Access_chat = [-1001303494318, -281779600]
 
 try:
     TOKEN = os.environ['token']
-    #MONGO_LINK = os.environ['mongo_link']
+
 except:
     from variables import *
 
-
+#MONGO_LINK = os.environ['mongo_link']
 #mdb = MongoClient(MONGO_LINK)[MONGO_DB]
 #def addtobase()
 
