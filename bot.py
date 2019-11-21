@@ -49,6 +49,11 @@ def access_member(message):
 
 
 
+@bot.message_handler(func=lambda m: m.text.startswith('/') and '@' in m.text and bot.get_me().username.lower()
+                               not in m.text.lower())
+def check_cmd_for_bot(m):
+     pass
+
 
 @bot.message_handler(commands=['start', 'help'])
 def start_mes(message):
