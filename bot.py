@@ -1,4 +1,4 @@
-#from variables import *
+from pymongo import MongoClient
 import telebot
 import time
 from telebot import types
@@ -6,10 +6,26 @@ from telebot import apihelper
 import os
 
 
+MONGO_DB = "tgbot"
 Access_chat = [-1001303494318, -281779600]
 
-TOKEN = os.environ['token']
+
+try:
+    TOKEN = os.environ['token']
+    MONGO_LINK = os.environ['mongo_link']
+except:
+    from variables import *
+
+
+mdb = MongoClient(MONGO_LINK)[MONGO_DB]
+def addtobase()
+
+
+
+
 bot = telebot.TeleBot(TOKEN)
+
+
 #apihelper.proxy = {'http': 'http://46.235.53.26:3128'}
 
 
@@ -51,7 +67,7 @@ def ping_handler(message):
 @bot.inline_handler(lambda query: query.query == '')
 def query_text(inline_query):
     try:
-        shrug = types.InlineQueryResultArticle('3', 'Shrug', types.InputTextMessageContent('¯\_(ツ)_/¯'))
+        shrug = types.InlineQueryResultArticle('1', 'Shrug', types.InputTextMessageContent('¯\_(ツ)_/¯'))
         bot.answer_inline_query(inline_query.id, [shrug])
     except Exception as e:
         print(e)
