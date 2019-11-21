@@ -18,7 +18,7 @@ except:
 
 
 mdb = MongoClient(MONGO_LINK)[MONGO_DB]
-def addtobase()
+#def addtobase()
 
 
 
@@ -47,6 +47,10 @@ def access_member(message):
         else:
             return True
 
+
+@bot.message_handler(lambda m: m.text.startswith('/') and '@' in m.text and bot_username.lower() not in m.text.lower())
+def check_cmd_for_bot(m):
+     pass
 
 @bot.message_handler(commands=['start', 'help'])
 def start_mes(message):
