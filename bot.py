@@ -12,14 +12,24 @@ Access_chat = [-1001303494318, -281779600]
 
 try:
     TOKEN = os.environ['token']
-
+    MONGO_LINK = os.environ['MONGO_LINK']
 except:
     from variables import *
 
-#MONGO_LINK = os.environ['mongo_link']
-#mdb = MongoClient(MONGO_LINK)[MONGO_DB]
-#def addtobase()
 
+mdb = MongoClient(MONGO_LINK)[MONGO_DB]
+
+def addtobase(message, mdb):
+    chat = mdb.chats.find_one({"chats_id": message.chat.id})
+    if not chat:
+        chat = {
+            "chat_id": message.chat.id,
+            "welcome_chat": ""
+        }
+        mdb.chats.insert_one(chat)
+    return chat
+
+def new_welcome_db(message, mdb):
 
 
 
@@ -29,7 +39,8 @@ bot = telebot.TeleBot(TOKEN)
 #apihelper.proxy = {'http': 'http://46.235.53.26:3128'}
 
 
-def access_handler(message):
+def access_handler(message, mdb):
+    addtobase(message, mdb)
     if message.chat.id in Access_chat:
         return True
     elif message.chat.type in ["group", "supergroup"]:
@@ -61,6 +72,7 @@ def start_mes(message):
         bot.send_message(message.chat.id, "Да, привет")
     elif message.chat.type in ["group", "supergroup"]:
         bot.reply_to(message, "Ответ бота, если написано в группе.")
+        addtobase(message, mdb)
 
 
 @bot.message_handler(commands=['ping'])
