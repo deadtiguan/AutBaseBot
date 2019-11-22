@@ -19,6 +19,12 @@ except:
 
 mdb = MongoClient(MONGO_LINK)[MONGO_DB]
 
+bot = telebot.TeleBot(TOKEN)
+
+
+#apihelper.proxy = {'http': 'http://46.235.53.26:3128'}
+
+
 def addtobase(message, mdb):
     chat = mdb.chats.find_one({"chats_id": message.chat.id})
     if not chat:
@@ -30,14 +36,6 @@ def addtobase(message, mdb):
     return chat
 
 def new_welcome_db(message, mdb):
-
-
-
-bot = telebot.TeleBot(TOKEN)
-
-
-#apihelper.proxy = {'http': 'http://46.235.53.26:3128'}
-
 
 def access_handler(message, mdb):
     addtobase(message, mdb)
