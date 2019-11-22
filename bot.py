@@ -17,7 +17,7 @@ except:
     from variables import *
 
 
-mdb = MongoClient(MONGO_LINK)[MONGO_DB]
+database = MongoClient(MONGO_LINK)[MONGO_DB]
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -25,21 +25,22 @@ bot = telebot.TeleBot(TOKEN)
 #apihelper.proxy = {'http': 'http://46.235.53.26:3128'}
 
 
-def addtobase(message, mdb):
-    chat = mdb.chats.find_one({"chats_id": message.chat.id})
+def addtobase(message, database):
+    chat = database.chats.find_one({"chat_id": message.chat.id})
     if not chat:
         chat = {
             "chat_id": message.chat.id,
-            "welcome_chat": ""
+            "welcome_chat": "",
+            "leave_mes": "",
+
         }
-        mdb.chats.insert_one(chat)
-    return chat
+        database.chats.insert_one(chat)
+    return
 
-def new_welcome_db(message, mdb):
 
-def access_handler(message, mdb):
-    addtobase(message, mdb)
+def access_handler(message):
     if message.chat.id in Access_chat:
+        addtobase(message, database)
         return True
     elif message.chat.type in ["group", "supergroup"]:
         bot.send_message(message.chat.id, "Чат не подтвержден. Ливаю..")
@@ -180,9 +181,8 @@ def setwelcome_handler(message):
 def newwelcome(message, id_from_who, x):
     if id_from_who == message.from_user.id:
         new_welcome = message.text
-        file = open('welcome.txt', 'w')
-        file.write(new_welcome)
-        file.close()
+        database.chats.update_one({"chat_id": message.chat.id}, {"$set": {
+                                                                         "welcome_chat": new_welcome}})
         bot.send_message(message.chat.id, "Текущее приветствие теперь:\n" + new_welcome)
         bot.delete_message(message.chat.id, message.message_id)
         bot.delete_message(message.chat.id, x[0].message_id)
@@ -200,7 +200,7 @@ def start_mes_alt(message):
 @bot.message_handler(func=access_handler, content_types=['new_chat_members'])
 def hello_handler(message):
     try:
-        bot.reply_to(message, open("welcome.txt", "r").read())
+        bot.reply_to(message, database.chats.find_one({"chat_id": message.chat.id})['welcome_chat'])
     except:
         bot.reply_to(message, "Заглушка")
 
